@@ -10,19 +10,11 @@ if ($_SERVER["SERVER_NAME"] == 'kair.project'){
 }
 if ($_SERVER["SERVER_NAME"] == 'englishforall.xyz') {
     $db['host'] = "mysql.hostinger.ru";
-    $db['username'] = "u280644861_tube";
-    $db['password'] = "u280644861_tube";
-    $db['name'] = "u280644861_tube";
-
-    $redirect_uri = 'http://englishforall.xyz/index.php'; // Адрес сайта
-}
-if ($_SERVER["SERVER_NAME"] == 'kair.esy.es') {
-    $db['host'] = "mysql.hostinger.ru";
     $db['username'] = "u697075938_12345";
     $db['password'] = "123456";
     $db['name'] = "u697075938_12345";
 
-    $redirect_uri = 'http://kair.esy.es/vk/index.php'; // Адрес сайта
+    $redirect_uri = 'http://englishforall.xyz/index.php'; // Адрес сайта
 }
 
 include_once("lib_vk.php");
