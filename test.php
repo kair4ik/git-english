@@ -1,63 +1,72 @@
 <?
+header('Content-Type: text/html; charset=utf-8');
 
-    function get_info_vk($redirect_uri){
-    	$client_id = '5373836'; // ID приложения
+function my_curl($url, $connect_timeout=10, $timeout=120)
+{
+    $ch = curl_init();
+    curl_setopt($ch,CURLOPT_URL,$url);
+    curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+    curl_setopt($ch,CURLOPT_TIMEOUT, $timeout);
+    curl_setopt($ch,CURLOPT_CONNECTTIMEOUT, $connect_timeout);
+    $data = curl_exec($ch);
+    curl_close($ch);
+    return $data;
+}
+
+if ($_SERVER["SERVER_NAME"] == 'git-english'){
+     $redirect_uri = 'http://git-english/test.php'; // Адрес сайта
+}
+if ($_SERVER["SERVER_NAME"] == 'englishforall.xyz') {
+
+    $redirect_uri = 'http://englishforall.xyz/test.php'; // Адрес сайта
+}
+if ($_SERVER["SERVER_NAME"] == 'kair.itruba.com.ua') {
+
+    $redirect_uri = 'http://kair.itruba.com.ua/test.php'; // Адрес сайта
+}
+
+        $client_id = '5373836'; // ID приложения
         $client_secret = 'QMmTTWSImHZwoCPEKIlE'; // Защищённый ключ
-    	$url = 'http://oauth.vk.com/authorize';
+                
         $params = array(
             'client_id'     => $client_id,
             'redirect_uri'  => $redirect_uri,
+            'page' => 'popup',
             'response_type' => 'code',
-            'scope'         => 'wall,offline,email,audio' 
+            'scope'         => 'offline,email',
+            'v'  => '5.52'
         );
         // friends,photos,audio,video,docs,notes,pages,status,offers,questions,wall,groups,email,notifications,stats,market
-        $link =  $url . '?' . urldecode(http_build_query($params));
+       echo  "ссылка авторизации: ".$link = "http://oauth.vk.com/authorize?" . urldecode(http_build_query($params));
 
-        echo "<a href=\"".$link."\"><img src=\"vk.png\"></a>";
+        echo "<br><a href=\"".$link."\">Авторизоваться</a>";
 
-        if (isset($_GET['code'])) {
-        $result = false; 
         $params = array(
             'client_id' => $client_id,
             'client_secret' => $client_secret,
             'code' => $_GET['code'],
             'redirect_uri' => $redirect_uri
         );
-        $url1 = "https://oauth.vk.com/access_token?".urldecode(http_build_query($params));
-
-        // $token = json_decode(my_curl($url1), true);
-        $token = my_big_curl($url1,$params);
-
-        setcookie("tokenVK",$token["access_token"],time()+3600);
-        setcookie("email",$token["email"],time()+3600);
-        setcookie("user_id",$token["user_id"],time()+3600);
-
+        echo "<br>юрл1: ".$url1 = "https://oauth.vk.com/access_token?".urldecode(http_build_query($params));
+        echo "<br>токен: ".$token = my_curl($url1);
+        $token = json_decode($token, true);
+        echo "<br>ответ: ";
+        print_r($token);
+                
+                
         $params = array(
             'uids'         => $token['user_id'],
             'fields'       => 'uid,first_name,last_name,screen_name,sex,bdate,photo_big',
             'access_token' => $token['access_token']
         );
-        $url2 = "https://api.vk.com/method/users.get?".urldecode(http_build_query($params));
+        echo "<br>УРЛ2: ".$url2 = "https://api.vk.com/method/users.get?".urldecode(http_build_query($params));
         //инфа о юзере
-        $userInfo = my_big_curl($url2,$params);
-        $userInfo = $userInfo['response'][0];
-        $userInfo['email'] = $token['email'];
+        $userInfo1 = my_curl($url2);
+        $userInfo = json_decode($userInfo1, true);
 
-        $user[0] = "";
-        $user[1] = $userInfo['first_name']." ".$userInfo['last_name'];
-        $user[2] = $userInfo['uid'];
-        $user[3] = $userInfo['sex'];
-        $user[4] = $userInfo['photo_big'];
-        $user[5] = bday_to_timeVK($userInfo['bdate']);
-        $user[6] = $userInfo['email'];
-        $user[7] = "http://vk.com/".$userInfo['screen_name'];
-
-        return $user;
-    	}
-    }
-
-    $redirect_uri = 'http://englishforall.xyz/index.php'; 
-    $user = get_info_vk($redirect_uri);
-    print_arr($user,"Юзер");
+        echo "<pre>";
+        print_r($userInfo);
+        echo "</pre>";
+       
 
 ?>

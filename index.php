@@ -2,6 +2,7 @@
 ob_start();
 include_once("php_lib.php");
 $pagename = "index.php";
+
 ?>
 <!doctype html>
 <html lang="en">
@@ -14,7 +15,7 @@ $pagename = "index.php";
 </head>
 <body>
 <?
-
+    
     if ($_SESSION['VKid'] == ""){
 
         $user = get_info_vk($redirect_uri);
@@ -61,9 +62,6 @@ $pagename = "index.php";
     }
 
 ?>
-
-
-
 
 <a href="users.php"> Далее</a>
 </body>

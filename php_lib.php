@@ -1,22 +1,6 @@
 ﻿<?php
-        
-if ($_SERVER["SERVER_NAME"] == 'git-english'){
-    $db['host'] = "localhost";  
-    $db['username'] = "root";
-    $db['password'] = "";
-    $db['name'] = "kair";
-
-    $redirect_uri = 'http://git-english/index.php'; // Адрес сайта
-}
-if ($_SERVER["SERVER_NAME"] == 'englishforall.xyz') {
-    $db['host'] = "mysql.hostinger.ru";
-    $db['username'] = "u697075938_12345";
-    $db['password'] = "123456";
-    $db['name'] = "u697075938_12345";
-
-    $redirect_uri = 'http://englishforall.xyz/index.php'; // Адрес сайта
-}
-
+header('Content-Type: text/html; charset=utf-8');
+include_once("config.php");
 include_once("lib_vk.php");
 
 session_start();    
@@ -41,14 +25,15 @@ function my_big_curl($url,$params){
     curl_setopt($curl, CURLOPT_POSTFIELDS, urldecode(http_build_query($params)));
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-    $result = curl_exec($curl);
+    $result1 = curl_exec($curl);
     curl_close($curl);
-    $tokenInfo = json_decode($result, true);
-    return $tokenInfo;
+    $result2 = json_decode($result1, true);
+    return $result2;
 }
 
     function add_db_users($db,$arr){
         $mysqli = new mysqli($db['host'], $db['username'],$db['password'], $db['name']);
+        $mysqli->query("SET NAMES 'utf8'");
         $sql = $mysqli->query("INSERT INTO users VALUES ('".$arr[0]."','".$arr[1]."','".$arr[2]."','".$arr[3]."','".$arr[4]."','".$arr[5]."','".$arr[6]."','".$arr[7]."')");
         if ($sql) {
             header("Location: $pagename");
@@ -61,6 +46,7 @@ function my_big_curl($url,$params){
 
     function select_db($db,$table,$option1="",$option2=""){
         $mysqli = new mysqli($db['host'], $db['username'],$db['password'], $db['name']);
+        $mysqli->query("SET NAMES 'utf8'");
         if ($option1==""){
             $query = $mysqli->query("SELECT * FROM $table");
         }
