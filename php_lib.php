@@ -1,12 +1,12 @@
 ﻿<?php
         
-if ($_SERVER["SERVER_NAME"] == 'kair.project'){
+if ($_SERVER["SERVER_NAME"] == 'git-english'){
     $db['host'] = "localhost";  
     $db['username'] = "root";
     $db['password'] = "";
     $db['name'] = "kair";
 
-    $redirect_uri = 'http://kair.project/index.php'; // Адрес сайта
+    $redirect_uri = 'http://git-english/index.php'; // Адрес сайта
 }
 if ($_SERVER["SERVER_NAME"] == 'englishforall.xyz') {
     $db['host'] = "mysql.hostinger.ru";

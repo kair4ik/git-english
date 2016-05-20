@@ -14,10 +14,6 @@ $pagename = "index.php";
 </head>
 <body>
 <?
-    // print_arr($_COOKIE);
-    // print_arr($_SESSION);
-// $user = get_info_vk($redirect_uri);
-        // print_arr($user);
 
     if ($_SESSION['VKid'] == ""){
 
