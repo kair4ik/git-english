@@ -5,7 +5,7 @@
         return $birthday;
     }
 
-    function get_info_vk($redirect_uri){
+    function get_info_vk($redirect_uri,$flag=true){
     	$client_id = '5373836'; // ID приложения
         $client_secret = 'QMmTTWSImHZwoCPEKIlE'; // Защищённый ключ
     	$url = 'http://oauth.vk.com/authorize';
@@ -32,11 +32,11 @@
 
         // $token = json_decode(my_curl($url1), true);
         $token = my_big_curl($url1,$params);
-
+        if (flag == false){
         setcookie("tokenVK",$token["access_token"],time()+3600);
         setcookie("email",$token["email"],time()+3600);
         setcookie("user_id",$token["user_id"],time()+3600);
-
+        }
         $params = array(
             'uids'         => $token['user_id'],
             'fields'       => 'uid,first_name,last_name,screen_name,sex,bdate,photo_big',
@@ -48,16 +48,16 @@
         $userInfo = $userInfo['response'][0];
         $userInfo['email'] = $token['email'];
 
-        $user[0] = "";
-        $user[1] = $userInfo['first_name']." ".$userInfo['last_name'];
-        $user[2] = $userInfo['uid'];
-        $user[3] = $userInfo['sex'];
-        $user[4] = $userInfo['photo_big'];
-        $user[5] = bday_to_timeVK($userInfo['bdate']);
-        $user[6] = $userInfo['email'];
-        $user[7] = "http://vk.com/".$userInfo['screen_name'];
+        // $user[0] = "";
+        // $user[1] = $userInfo['first_name']." ".$userInfo['last_name'];
+        // $user[2] = $userInfo['uid'];
+        // // $user[3] = $userInfo['sex'];
+        // $user[4] = $userInfo['photo_big'];
+        // $user[5] = bday_to_timeVK($userInfo['bdate']);
+        // $user[6] = $userInfo['email'];
+        $userInfo['link'] = "http://vk.com/".$userInfo['screen_name'];
 
-        return $user;
+        return $userInfo;
     	}
     }
 

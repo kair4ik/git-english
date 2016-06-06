@@ -44,6 +44,19 @@ function my_big_curl($url,$params){
         return $sql;
     }
 
+    function add_db_words($db,$word,$translate){
+        $mysqli = new mysqli($db['host'], $db['username'],$db['password'], $db['name']);
+        $mysqli->query("SET NAMES 'utf8'");
+        $sql = $mysqli->query("INSERT INTO words VALUES ('','".$word."','".$translate."')");
+        if ($sql) {
+            header("Location: $pagename");
+        } else {
+            echo "Произошла ошибка.";
+        }
+        $mysqli->close();
+        return $sql;
+    }
+
     function select_db($db,$table,$option1="",$option2=""){
         $mysqli = new mysqli($db['host'], $db['username'],$db['password'], $db['name']);
         $mysqli->query("SET NAMES 'utf8'");
