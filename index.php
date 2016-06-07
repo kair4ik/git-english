@@ -5,12 +5,14 @@ $pagename = "index.php";
 
 ?>
 <!doctype html>
-<html lang="en">
+<html lang="ru">
 <head>
 	<meta charset="UTF-8">
 	<title>Главная</title>
     <link rel="stylesheet" href="main.css">
     <script type="text/javascript" src="http://scriptjava.net/source/scriptjava/scriptjava.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
 	
 </head>
 <body>
@@ -26,20 +28,18 @@ $pagename = "index.php";
     $db = $con->kair;
     $words = $db->words_base;
     $words = $words->find();
+
+    // База слов
+    // foreach($words as $word) {
+    //   $i++;
+    //   echo "<form action=\"".$pagename."\" method = \"post\">";
+    //   echo "<input type=\"text\"  name=\"word\" value=\"{$word['word']}\">";
+    //   echo "<input type=\"text\"  name=\"translate\" value=\"{$word['translate']}\">";
+    //   echo "<input type=\"submit\" name=\"add\" value=\"Добавить\">";
+    //   echo "</form>";
+    // }
+    // echo "База слов. Всего: ".$i."<br>";
     
-    foreach($words as $word) {
-      // echo $word['word']." - ".$word['translate']."<br>";
-      $i++;
-      echo "<form action=\"".$pagename."\" method = \"post\">";
-      echo "<input type=\"text\" size=1 name=\"word\" value=\"{$word['word']}\">";
-      echo "<input type=\"text\" size=5 name=\"translate\" value=\"{$word['translate']}\">";
-      // echo "<input type=\"text\"  name=\"_id\" value=\"{$word['_id']}\">";
-      echo "<input type=\"submit\" name=\"add\" value=\"Добавить\">";
-      echo "</form>";
-      // echo "<br>";
-    }
-    
-    echo "<br>Всего слов: ".$i."<br>";
 
     $con->close();
 
@@ -72,64 +72,93 @@ $pagename = "index.php";
         // $user = $users->find();
         $user_db = $users->findOne(array('uid' => new MongoInt32($_SESSION['VKid'])));
         if (!empty($user_db)){
-            print_arr($user_db,$user_db['first_name']);
-            echo "
-                 <form action=\"".$pagename."\" method = \"post\">
-                <input type=\"submit\" name=\"exit\" value=\"Выход\">
-            </form>
-             ";
+
+
+        // echo "Слова для изучения. Всего: ".count($user_db['words'])."<br>";
+        // foreach($user_db['words'] as $word => $translate) {
+        //     echo "<form action=\"".$pagename."\" method = \"post\">";
+        //     echo "<input type=\"text\"  name=\"word\" value=\"$word\">";
+        //     echo "<input type=\"text\"  name=\"translate\" value=\"$translate\">";
+        //     echo "<input type=\"submit\" name=\"add_stage1\" value=\"On stage1\">";
+        //     echo "</form>";
+        // }
+
+        echo "<br>";
+            // echo "Всего слов: ".count($user_db['words'])."<br>";
+
+
+
+        $stage1 = $user_db['stage1'];
+
+        if (count($stage1) >=1){
+            print_arr($stage1,"Cтадия 1");
+            echo "Всего слов: ".count($stage1)."<br>";
+
+            $word_index = $_COOKIE["stage1_index"];
+            $a_keys = array_keys($stage1);
+            echo $a_keys[$word_index]." - ".$stage1[$a_keys[$word_index]];  
+            echo "<form action=\"".$pagename."\" method = \"post\">
+                <input type=\"submit\" name=\"from_stage1_to_words\" value=\"On words\">
+                <input type=\"text\"  name=\"word\" value=\"{$a_keys[$word_index]}\">
+                <input type=\"text\"  name=\"translate\" value=\"{$stage1[$a_keys[$word_index]]}\">
+                <input type=\"submit\" name=\"add_stage2\" value=\"On stage2\">
+                <input type=\"submit\" name=\"minus1\" value=\"<=\">
+                <input type=\"submit\" name=\"plus1\" value=\"=>\">
+                </form>";
+        } else if (count($stage1) == 0){
+            echo "В этой тренировке нет слов, добавьте новые слова для тренировок =)<br><br>";
+        }
+        echo "<br>";
+
+
+        $stage2= $user_db['stage2'];
+
+        if (count($stage2) >=1){
+            print_arr($stage2,"Cтадия 2");
+
+            $word_index = $_COOKIE["stage2_index"];
+            $a_keys = array_keys($stage2);
+            // echo $a_keys[$word_index]." - ".$stage2[$a_keys[$word_index]];
+
+            echo "<form action=\"".$pagename."\" method = \"post\">
+                <input type=\"submit\" name=\"from_stage2_to_stage1\" value=\"On stage1\">
+                <input id=\"word\" type=\"text\"  name=\"word\" value=\"{$a_keys[$word_index]}\">
+                <input id=\"translate\" type=\"hidden\"  name=\"translate\" value=\"{$stage2[$a_keys[$word_index]]}\">
+                <input type=\"submit\" name=\"add_stage3\" value=\"On stage3\">
+                <input type=\"submit\" name=\"minus2\" value=\"<=\">
+                <input type=\"submit\" name=\"plus2\" value=\"=>\">
+                </form>";
+
+            // $stage2_new = $stage2;
+            // shuffle($stage2);
+            foreach ($stage2 as $word => $translate){
+                // echo "<input type=\"button\" class=\"button2_stage2\" name=\"$word\" value=\"$translate\">";
+                echo "<input type=\"hidden\" class=\"button2_stage2\" name=\"$word\" value=\"$translate\">";
+                // echo "<input type=\"button\" class=\"button_stage2\" name=\"$translate\" value=\"$word\">";
+            }
+            // echo "<br>";
+            shuffle($stage2);
+            foreach ($stage2 as $word => $translate){
+                echo "<input type=\"button\" class=\"button_stage2\" name=\"translate\" value=\"$translate\">";
+                // echo "<input type=\"button\" class=\"button_stage2\" name=\"word\" value=\"$word\"><br>";
+            }
+
+        } else if (count($stage2) == 0){
+            echo "В этой тренировке нет слов, добавьте новые слова для тренировок =)<br><br>";
+        }
+
+        echo "<br>";
+        echo "<br>";
+        echo "<form action=\"".$pagename."\" method = \"post\">
+            <input type=\"submit\" name=\"exit\" value=\"Выход\">
+            </form>";
         }
        
-
-        // $words = get_arr_from_arrays(select_db($db,"words"),'word');
-        // $translate = get_arr_from_arrays(select_db($db,"words"),'translate');
-
-        // print_arr($words,"Слово");
-        // print_arr($translate,"Перевод");
-
-        // $new_word = array($words,$translate);
-        // print_arr($new_word,"Новый");
-
-        // $new_words = $new_word[0];
-        // $new_translates = $new_word[1];
-        // for($i=0;$i<count($new_words);$i++){
-        //    // echo  $i.".".$new_words[$i]." - ".$new_translates[$i]."<br>";
-        //     if (empty($_COOKIE[$i])){
         //    setcookie($i,$new_words[$i],time()+300);
-        //    setcookie($new_words[$i],$new_translates[$i],time()+300);
-        //    setcookie($new_translates[$i],$new_words[$i],time()+300);
-        //     }
-        // }
-
-        // print_arr($_COOKIE,"Куки");
-
-        // for ($i=1;$i<=21;$i++){
-        // $i = rand(1, 21);
-        //     echo $i." => ".$_COOKIE[$i]." => ".$_COOKIE[$_COOKIE[$i]]."<br>";
-        // }
-        // echo "Радном: ".
     }
 
 
     echo "<br>";
-
-
-    // запись
-    // $post = array(
-    //      'word'     => 'one',
-    //      'translate'   => 'один'
-    //   );
-    // $posts->insert($post);
-
-    // $id = '57556ccb55e3f2681a00002b';
-
-    // $con = new MongoClient('localhost');
-    // $db = $con->kair;
-    // $words1 = $db->words_base;
-    // $words2 = $words1->findOne(array('_id' => new MongoId($id)));
-    // $words2['word'] = "mouse";
-    // $words2['translate'] = "мышь";
-    // print_arr($words2);
 
     // $words3 = $words2;
     // // обновление
@@ -146,7 +175,35 @@ $pagename = "index.php";
 
 ?>
 
-<a href="users.php"> Далее</a>
+<script>
+$(".button_stage2").click(function(){
+    var arr_words = [];
+    var arr_translate = [];
+    var person = {};
+    var word = $(this).attr("value");
+    var our_word = $("#word").attr("value");
+
+    var amout_img = document.getElementsByClassName("button2_stage2").length;
+
+    for(var i=0;i<amout_img;i++){
+        arr_words[arr_words.length] = document.getElementsByClassName("button2_stage2")[i].getAttribute("name");
+        arr_translate[arr_translate.length] = document.getElementsByClassName("button2_stage2")[i].getAttribute("value");
+        person[arr_translate[i]] = arr_words[i]; 
+        if (arr_translate[i] == word){
+            $(this).attr("value",person[arr_translate[i]]);
+            $(this).attr("name",arr_translate[i]);
+        }
+    }
+    var word2 = $(this).attr("value");
+    if (word2 == our_word){
+        $(this).css({"background":"green"});
+    }else {
+        $(this).css({"background":"orange"});
+    }
+});
+
+    
+</script>
 </body>
 </html>
 <?
@@ -173,7 +230,7 @@ $pagename = "index.php";
         $word = $_POST["word"];
         $translate = $_POST["translate"];
 
-        $_id = $_POST["_id"];
+        // $_id = $_POST["_id"];
         $user_db['words'][$word] = $translate;
 
         $con = new MongoClient('localhost');
@@ -185,6 +242,92 @@ $pagename = "index.php";
         );
         header("Location:$pagename");
     }
+
+    if (isset($_POST["add_stage1"])){
+        $word = $_POST["word"];
+        $translate = $_POST["translate"];
+
+        $user_db['stage1'][$word] = $translate;
+
+        $con = new MongoClient('localhost');
+        $db = $con->kair;
+        $users = $db->users;
+        $users->update(
+            array('uid'     => new MongoInt32($_SESSION['VKid'])),
+            $user_db
+        );
+        header("Location:$pagename");
+    }
+
+    if (isset($_POST["add_stage2"])){
+        $word = $_POST["word"];
+        $translate = $_POST["translate"];
+
+        unset($user_db['stage1'][$word]);
+        $user_db['stage2'][$word] = $translate;
+
+        $con = new MongoClient('localhost');
+        $db = $con->kair;
+        $users = $db->users;
+        $users->update(
+            array('uid'     => new MongoInt32($_SESSION['VKid'])),
+            $user_db
+        );
+        header("Location:$pagename");
+    }
+
+    if (isset($_POST["from_stage1_to_words"])){
+        $word = $_POST["word"];
+        $translate = $_POST["translate"];
+
+        unset($user_db['stage1'][$word]);
+
+        $con = new MongoClient('localhost');
+        $db = $con->kair;
+        $users = $db->users;
+        $users->update(
+            array('uid'     => new MongoInt32($_SESSION['VKid'])),
+            $user_db
+        );
+        header("Location:$pagename");
+    }
+    if (isset($_POST["from_stage2_to_stage1"])){
+        $word = $_POST["word"];
+        $translate = $_POST["translate"];
+
+        unset($user_db['stage2'][$word]);
+        $user_db['stage1'][$word] = $translate;
+
+        $con = new MongoClient('localhost');
+        $db = $con->kair;
+        $users = $db->users;
+        $users->update(
+            array('uid'     => new MongoInt32($_SESSION['VKid'])),
+            $user_db
+        );
+        header("Location:$pagename");
+    }
+
+    // две кнопки, кука и массив, проходит по массиву от начала до конца, не выходя за его пределы
+    function back_next($plus,$minus,$cookie,$arr){
+        if (isset($_POST[$plus])){
+            if ($_COOKIE[$cookie] >= 0 && $_COOKIE[$cookie] <= count($arr)-2){
+                $i = $_COOKIE[$cookie] + 1;
+                setcookie($cookie,$i);
+            }
+            header("Location:$pagename");
+        }
+        if (isset($_POST[$minus])){
+            if ($_COOKIE[$cookie] >= 1 && $_COOKIE[$cookie] <= count($arr)){
+                $i = $_COOKIE[$cookie] - 1;
+                setcookie($cookie,$i);
+            }
+            header("Location:$pagename");
+        }
+    }
+
+    back_next("plus1","minus1","stage1_index",$stage1);
+    back_next("plus2","minus2","stage2_index",$stage2);
 
 
 ?>
