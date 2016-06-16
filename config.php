@@ -8,10 +8,10 @@ if ($_SERVER["SERVER_NAME"] == 'git-english'){
     $redirect_uri = 'http://git-english/index.php'; // Адрес сайта
 }
 if ($_SERVER["SERVER_NAME"] == 'englishforall.xyz') {
-    $db['host'] = "mysql.hostinger.ru";
-    $db['username'] = "u697075938_12345";
-    $db['password'] = "123456";
-    $db['name'] = "u697075938_12345";
+    $db['host'] = "mongodb0.locum.ru";
+    $db['username'] = "kair4ik_kair45";
+    $db['password'] = "5Kvjp4E0e";
+    $db['name'] = "kair4ik_kair45";
 
     $redirect_uri = 'http://englishforall.xyz/index.php'; // Адрес сайта
 }
